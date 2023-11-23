@@ -13,8 +13,6 @@ const userSchema = new Schema<User, usersMethodsModel>({
     required: [true, "Password is required"],
   },
   fullName: {
-    type: Object,
-    required: [true, "Full Name is required"],
     firstName: { type: String, required: [true, "First Name is required"] },
     lastName: { type: String, required: [true, "Last Name is required"] },
   },

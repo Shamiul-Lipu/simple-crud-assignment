@@ -8,7 +8,7 @@ const createNewUser = async (req: Request, res: Response) => {
     const result = await userService.createNewUser(user);
 
     // send response
-    res.status(200).json({
+    res.json({
       success: true,
       message: "User is created sucessfully",
       data: result,
@@ -24,14 +24,14 @@ const retrieveAllUser = async (req: Request, res: Response) => {
     const result = await userService.retrieveAllUser();
 
     // send response
-    res.status(200).json({
+    res.json({
       success: true,
       message: "Users fetched successfully!",
       data: result,
     });
   } catch (error) {
     // send response
-    res.status(404).json({
+    res.json({
       success: false,
       message: "Somthing went wrong",
       error: {
@@ -62,7 +62,7 @@ const retrieveUserByID = async (req: Request, res: Response) => {
     }
 
     // send response based on user id
-    res.status(200).json({
+    res.json({
       success: true,
       message: "User fetched successfully!",
       data: result,
@@ -99,7 +99,7 @@ const updateUser = async (req: Request, res: Response) => {
     }
 
     // send response
-    res.status(200).json({
+    res.json({
       success: true,
       message: "user updated sucessfully",
       data: result,
@@ -117,6 +117,7 @@ const updateUser = async (req: Request, res: Response) => {
   }
 };
 
+// Delete a user
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -134,14 +135,14 @@ const deleteUser = async (req: Request, res: Response) => {
     }
 
     // send response
-    res.status(200).json({
+    res.json({
       success: true,
       message: "User deleted successfully!",
       data: null,
     });
   } catch (error: any) {
     // console.log(error);
-    res.status(404).json({
+    res.json({
       success: false,
       message: "User not found",
       error: {
@@ -152,10 +153,102 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+// Add New Products in Users Order
+const addNewProductsInOrder = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.userId;
+    const orders = req.body;
+    const result = await userService.addNewProductsInOrder(
+      parseInt(userId),
+      orders
+    );
+
+    if (!result) {
+      return res.json({
+        success: false,
+        message: "Somthing went wrong",
+        error: {
+          code: 404,
+          description: `The user ID you entered does not exist!`,
+        },
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Order created successfully!",
+      data: null,
+    });
+  } catch (error: any) {
+    // console.log(error);
+    res.status(404).json({
+      success: false,
+      message: "Somthing went wrong",
+      error: {
+        code: 404,
+        description: `${error.message}`,
+      },
+    });
+  }
+};
+
+//  Retrieve all orders for a specific user
+const retrieveAllordersOfUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await userService.retrieveAllordersOfUser(parseInt(userId));
+    // console.log(userId, result);
+    if (result) {
+      res.json({
+        success: true,
+        message: "Order fetched successfully!",
+        data: result,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "Somthing went wrong",
+        error: {
+          code: 404,
+          description: `The user ID you entered does not exist!`,
+        },
+      });
+    }
+  } catch (error: any) {
+    // console.log(error);
+    return res.json({
+      success: false,
+      message: "Somthing went wrong",
+      error: {
+        code: 404,
+        description: `${error.message}`,
+      },
+    });
+  }
+};
+
+//  Calculate Total Price of Orders for a Specific User
+const calculateTotalOrdersOfUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await userService.calculateTotalOrdersOfUser(
+      parseInt(userId)
+    );
+
+    console.log(result, userId);
+  } catch (error) {
+    // console.log(error);
+  }
+};
+
 export const userController = {
   createNewUser,
   retrieveAllUser,
   retrieveUserByID,
   updateUser,
   deleteUser,
+  addNewProductsInOrder,
+  retrieveAllordersOfUser,
+  calculateTotalOrdersOfUser,
 };

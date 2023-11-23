@@ -1,5 +1,5 @@
 import { UserModel } from "../user.modules";
-import { User } from "./user.interface";
+import { Orders, User } from "./user.interface";
 
 const createNewUser = async (user: User): Promise<User> => {
   const result = await UserModel.create(user);
@@ -62,9 +62,79 @@ const updateUser = async (userId: number, user: User) => {
   return false;
 };
 
+// Delete a user
 const deleteUser = async (userId: number) => {
   if (await UserModel.isUserExists(userId)) {
     const result = await UserModel.deleteOne({ userId: userId });
+    return result;
+  }
+  return false;
+};
+
+// Add New Products in Users Order
+const addNewProductsInOrder = async (userId: number, orders: Orders) => {
+  if (await UserModel.isUserExists(userId)) {
+    const result = await UserModel.findOneAndUpdate(
+      { userId },
+      {
+        $push: { orders: { $each: orders }, $setonInsert: { orders: orders } },
+      },
+      { upsert: true, new: true, runValidators: true }
+    );
+    return result;
+  }
+  return false;
+};
+
+//  Retrieve all orders for a specific user
+const retrieveAllordersOfUser = async (userId: number) => {
+  if (await UserModel.isUserExists(userId)) {
+    const result = await UserModel.aggregate([
+      // stage 1
+      { $match: { userId: userId } },
+      // stage 2
+      {
+        $project: {
+          _id: 0,
+          orders: 1,
+        },
+      },
+    ]);
+    return result;
+  }
+  return false;
+};
+
+//  Calculate Total Price of Orders for a Specific User
+const calculateTotalOrdersOfUser = async (userId: number) => {
+  if (await UserModel.isUserExists(userId)) {
+    const result = await UserModel.aggregate([
+      // stage 1
+      { $match: { userId: userId } },
+      // stage 2
+      {
+        $unwind: "$orders",
+      },
+      // stage 3
+      // {
+      //   $group: {
+      //     _id: null,
+      //     total: { $sum: "$totalPrice" },
+      //   },
+      // },
+      {
+        $project: {
+          orders: 1,
+          total: { $multiply: ["$orders.price", "$orders.quantity"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$total",
+          totalPrice: { $sum: 1 },
+        },
+      },
+    ]);
     return result;
   }
   return false;
@@ -76,4 +146,7 @@ export const userService = {
   retrieveUserByID,
   updateUser,
   deleteUser,
+  addNewProductsInOrder,
+  retrieveAllordersOfUser,
+  calculateTotalOrdersOfUser,
 };

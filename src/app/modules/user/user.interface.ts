@@ -1,5 +1,11 @@
 import { Model } from "mongoose";
 
+export interface Orders {
+  productName: string;
+  price: number;
+  quantity: number;
+}
+
 export interface User {
   userId: number;
   username: string;
@@ -17,13 +23,7 @@ export interface User {
     city: string;
     country: string;
   };
-  orders: [
-    {
-      productName: string;
-      price: number;
-      quantity: number;
-    }
-  ];
+  orders: Orders[];
 }
 
 export interface usersMethodsModel extends Model<User> {
