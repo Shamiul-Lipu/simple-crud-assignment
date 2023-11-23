@@ -125,7 +125,7 @@ const updateUser = async (req: Request, res: Response) => {
     // send response
     res.json({
       success: true,
-      message: "user updated sucessfully",
+      message: "User updated successfully!",
       data: result,
     });
   } catch (error: any) {

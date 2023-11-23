@@ -51,8 +51,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// post aggregate middleware
-
 export const UserModel = model<User, usersMethodsModel>("user", userSchema);
 
 export default {

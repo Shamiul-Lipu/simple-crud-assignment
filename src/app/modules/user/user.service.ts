@@ -1,17 +1,34 @@
 import { UserModel } from "../user.modules";
 import { Orders, User } from "./user.interface";
 
-const createNewUser = async (user: User): Promise<User> => {
+//  Create a new user
+const createNewUser = async (user: User) => {
   const result = await UserModel.create(user);
-  return result;
+  const aggregatedResult = await UserModel.aggregate([
+    { $match: { userId: result.userId } },
+    {
+      $project: {
+        _id: 0,
+        userId: 1,
+        username: 1,
+        fullName: 1,
+        age: 1,
+        email: 1,
+        isActive: 1,
+        hobbies: 1,
+        address: 1,
+      },
+    },
+  ]);
+  return aggregatedResult;
 };
 
+//  Retrieve a list of all users
 const retrieveAllUser = async (): Promise<User[] | null> => {
   const result = await UserModel.aggregate([
     {
       $project: {
         _id: 0,
-        userId: 1,
         username: 1,
         fullName: 1,
         age: 1,
@@ -57,7 +74,23 @@ const updateUser = async (userId: number, user: User) => {
       { $set: { ...user } },
       { new: true, runValidators: true }
     );
-    return result;
+    const aggregatedResult = await UserModel.aggregate([
+      { $match: { userId: userId } },
+      {
+        $project: {
+          _id: 0,
+          userId: 1,
+          username: 1,
+          fullName: 1,
+          age: 1,
+          email: 1,
+          isActive: 1,
+          hobbies: 1,
+          address: 1,
+        },
+      },
+    ]);
+    return aggregatedResult;
   }
   return false;
 };
