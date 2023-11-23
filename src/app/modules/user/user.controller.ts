@@ -1,20 +1,44 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
+import { userValidatorSchema } from "./user.validation";
 
 // Create a new user
 const createNewUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
-    const result = await userService.createNewUser(user);
 
-    // send response
-    res.json({
+    const { error, value } = userValidatorSchema.validate(user);
+    // console.log(error, value);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+        error: {
+          code: 400,
+          description: "Validation failed",
+        },
+      });
+    }
+
+    const result = await userService.createNewUser(value);
+
+    // send success response
+    res.status(201).json({
       success: true,
-      message: "User is created sucessfully",
+      message: "User is created successfully",
       data: result,
     });
   } catch (error) {
     // console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: {
+        code: 500,
+        description: "Internal Server Error",
+      },
+    });
   }
 };
 
@@ -235,8 +259,23 @@ const calculateTotalOrdersOfUser = async (req: Request, res: Response) => {
     const result = await userService.calculateTotalOrdersOfUser(
       parseInt(userId)
     );
-
-    console.log(result, userId);
+    // console.log(result, userId);
+    if (result) {
+      res.json({
+        success: true,
+        message: "Total price calculated successfully!",
+        data: result,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "Somthing went wrong",
+        error: {
+          code: 404,
+          description: `The user ID you entered does not exist!`,
+        },
+      });
+    }
   } catch (error) {
     // console.log(error);
   }

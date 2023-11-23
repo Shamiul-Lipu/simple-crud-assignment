@@ -92,13 +92,24 @@ const retrieveAllordersOfUser = async (userId: number) => {
     const result = await UserModel.aggregate([
       // stage 1
       { $match: { userId: userId } },
-      // stage 2
+      {
+        $unwind: "$orders",
+      },
       {
         $project: {
-          _id: 0,
-          orders: 1,
+          "orders._id": 0,
         },
       },
+      // {
+      //   $project: {
+      //     _id: 0,
+      //     orders: 1,
+      //   },
+      // },
+      {
+        $group: { _id: "$orders" },
+      },
+      { $unwind: "$_id" },
     ]);
     return result;
   }
@@ -115,13 +126,6 @@ const calculateTotalOrdersOfUser = async (userId: number) => {
       {
         $unwind: "$orders",
       },
-      // stage 3
-      // {
-      //   $group: {
-      //     _id: null,
-      //     total: { $sum: "$totalPrice" },
-      //   },
-      // },
       {
         $project: {
           orders: 1,
@@ -130,9 +134,12 @@ const calculateTotalOrdersOfUser = async (userId: number) => {
       },
       {
         $group: {
-          _id: "$total",
-          totalPrice: { $sum: 1 },
+          _id: null,
+          totalPrice: { $sum: "$total" },
         },
+      },
+      {
+        $project: { _id: 0, totalPrice: 1 },
       },
     ]);
     return result;

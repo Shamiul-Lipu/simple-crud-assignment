@@ -1,5 +1,11 @@
 import { Schema, model } from "mongoose";
-import { User, usersMethodsModel } from "./user/user.interface";
+import { Orders, User, usersMethodsModel } from "./user/user.interface";
+
+const OrdersSchema = new Schema<Orders>({
+  productName: { type: String, required: [true, "Product name is required"] },
+  price: { type: Number, required: [true, "Price is required"] },
+  quantity: { type: Number, required: [true, "Quantity is required"] },
+});
 
 const userSchema = new Schema<User, usersMethodsModel>({
   userId: {
@@ -25,16 +31,7 @@ const userSchema = new Schema<User, usersMethodsModel>({
     city: { type: String, required: [true, "City is required"] },
     country: { type: String, required: [true, "Country is required"] },
   },
-  orders: [
-    {
-      productName: {
-        type: String,
-        required: [true, "Product Name is required"],
-      },
-      price: { type: Number, required: [true, "Price is required"] },
-      quantity: { type: Number, required: [true, "Quantity is required"] },
-    },
-  ],
+  orders: [OrdersSchema],
 });
 
 // creating static method
