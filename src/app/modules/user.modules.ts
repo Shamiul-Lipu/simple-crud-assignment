@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose";
 import { Orders, User, usersMethodsModel } from "./user/user.interface";
+import bcrypt from "bcrypt";
+import config from "../config";
 
 const OrdersSchema = new Schema<Orders>({
   productName: { type: String, required: [true, "Product name is required"] },
@@ -39,6 +41,15 @@ userSchema.statics.isUserExists = async (id: string) => {
   const existingUser = await UserModel.findOne({ userId: id });
   return existingUser;
 };
+
+// pre middleware
+userSchema.pre("save", async function (next) {
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds)
+  );
+  next();
+});
 
 // post aggregate middleware
 
