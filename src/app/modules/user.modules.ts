@@ -1,21 +1,27 @@
 import { Schema, model } from "mongoose";
-import { User } from "./user/user.interface";
+import { User, usersMethodsModel } from "./user/user.interface";
 
-const userSchema = new Schema({
-  userId: { type: Number, required: [true, "User ID is required"] },
+const userSchema = new Schema<User, usersMethodsModel>({
+  userId: {
+    type: Number,
+    required: [true, "User ID is required"],
+    unique: true,
+  },
   username: { type: String, required: [true, "Username is required"] },
   password: {
     type: String,
     required: [true, "Password is required"],
   },
   fullName: {
+    type: Object,
+    required: [true, "Full Name is required"],
     firstName: { type: String, required: [true, "First Name is required"] },
     lastName: { type: String, required: [true, "Last Name is required"] },
   },
   age: { type: Number, required: [true, "Age is required"] },
   email: { type: String, required: [true, "Email is required"] },
   isActive: { type: Boolean },
-  hobbies: [{ type: String }],
+  hobbies: [{ type: String, required: true }],
   address: {
     street: { type: String, required: [true, "Street is required"] },
     city: { type: String, required: [true, "City is required"] },
@@ -33,7 +39,15 @@ const userSchema = new Schema({
   ],
 });
 
-export const UserModel = model<User>("user", userSchema);
+// creating static method
+userSchema.statics.isUserExists = async (id: string) => {
+  const existingUser = await UserModel.findOne({ userId: id });
+  return existingUser;
+};
+
+// post aggregate middleware
+
+export const UserModel = model<User, usersMethodsModel>("user", userSchema);
 
 export default {
   userSchema,

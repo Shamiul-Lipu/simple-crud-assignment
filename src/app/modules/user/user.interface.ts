@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export interface User {
   userId: number;
   username: string;
@@ -22,4 +24,8 @@ export interface User {
       quantity: number;
     }
   ];
+}
+
+export interface usersMethodsModel extends Model<User> {
+  isUserExists(id: number): Promise<boolean | null>;
 }
