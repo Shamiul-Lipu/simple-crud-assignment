@@ -18,11 +18,7 @@ Before running the application, ensure you have the following installed in your 
 This command clones a repository from GitHub to your local machine.
 
 ```bash
-<<<<<<< HEAD
-   gh repo clone Shamiul-Lipu/simple-crud-assignment
-=======
-git clone https://github.com/Shamiul-Lipu/simple-crud-assignment.git
->>>>>>> 8901914a6dd76423bb058fadfe05597e4cbbc600
+   git clone https://github.com/Shamiul-Lipu/simple-crud-assignment.git
 ```
 
 2. Navigate to the project directory in your terminal.
