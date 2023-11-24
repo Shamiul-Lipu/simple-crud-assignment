@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { userService } from "./user.service";
-import { userValidatorSchema } from "./user.validation";
+import { OrdersValidatorSchema, userValidatorSchema } from "./user.validation";
 
 // Create a new user
 const createNewUser = async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ const createNewUser = async (req: Request, res: Response) => {
     // send success response
     res.status(201).json({
       success: true,
-      message: "User is created successfully",
+      message: "User created successfully!",
       data: result,
     });
   } catch (error) {
@@ -182,10 +182,26 @@ const addNewProductsInOrder = async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
     const orders = req.body;
+
+    const { error, value } = OrdersValidatorSchema.validate(orders);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+        error: {
+          code: 400,
+          description: "Validation failed",
+        },
+      });
+    }
+
     const result = await userService.addNewProductsInOrder(
       parseInt(userId),
-      orders
+      value
     );
+
+    console.log({ result: result }, userId);
 
     if (!result) {
       return res.json({

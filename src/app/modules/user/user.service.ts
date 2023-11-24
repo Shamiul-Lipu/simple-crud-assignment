@@ -4,8 +4,11 @@ import { Orders, User } from "./user.interface";
 //  Create a new user
 const createNewUser = async (user: User) => {
   const result = await UserModel.create(user);
+  // Providing the necessary response by generating an aggregation
   const aggregatedResult = await UserModel.aggregate([
+    // stage 1: finding user by userId
     { $match: { userId: result.userId } },
+    // stage 2: projecting the only required fields
     {
       $project: {
         _id: 0,
@@ -26,6 +29,7 @@ const createNewUser = async (user: User) => {
 //  Retrieve a list of all users
 const retrieveAllUser = async (): Promise<User[] | null> => {
   const result = await UserModel.aggregate([
+    // stage 1: projecting the only required fields
     {
       $project: {
         _id: 0,
@@ -44,9 +48,9 @@ const retrieveAllUser = async (): Promise<User[] | null> => {
 const retrieveUserByID = async (userId: number) => {
   if (await UserModel.isUserExists(userId)) {
     const result = await UserModel.aggregate([
-      // stage 1
+      // stage 1: finding user by userId
       { $match: { userId: userId } },
-      // stage 2
+      // stage 2: projecting the only required fields
       {
         $project: {
           _id: 0,
@@ -74,8 +78,11 @@ const updateUser = async (userId: number, user: User) => {
       { $set: { ...user } },
       { new: true, runValidators: true }
     );
+    // Providing the necessary response by generating an aggregation
     const aggregatedResult = await UserModel.aggregate([
+      // stage 1: finding user by userId
       { $match: { userId: userId } },
+      // stage 2: projecting the only required fields
       {
         $project: {
           _id: 0,
@@ -108,11 +115,9 @@ const deleteUser = async (userId: number) => {
 const addNewProductsInOrder = async (userId: number, orders: Orders) => {
   if (await UserModel.isUserExists(userId)) {
     const result = await UserModel.findOneAndUpdate(
-      { userId },
-      {
-        $push: { orders: { $each: orders }, $setonInsert: { orders: orders } },
-      },
-      { upsert: true, new: true, runValidators: true }
+      { userId: userId },
+      { $push: { orders: { $each: [orders] } } },
+      { new: true, runValidators: true }
     );
     return result;
   }
@@ -122,27 +127,34 @@ const addNewProductsInOrder = async (userId: number, orders: Orders) => {
 //  Retrieve all orders for a specific user
 const retrieveAllordersOfUser = async (userId: number) => {
   if (await UserModel.isUserExists(userId)) {
+    // Providing the necessary response by generating an aggregation
     const result = await UserModel.aggregate([
-      // stage 1
+      // stage 1: finding user by userId
       { $match: { userId: userId } },
+      // stage 2: deconstructing orders
       {
         $unwind: "$orders",
       },
+      // stage 3: projecting out mongodb _id
       {
         $project: {
           "orders._id": 0,
         },
       },
-      // {
-      //   $project: {
-      //     _id: 0,
-      //     orders: 1,
-      //   },
-      // },
+      // stage 4: reconstructing the orders fields
       {
-        $group: { _id: "$orders" },
+        $group: {
+          _id: null,
+          orders: { $push: "$orders" },
+        },
       },
-      { $unwind: "$_id" },
+      // stage 5: projecting the only required fields
+      {
+        $project: {
+          _id: 0,
+          orders: 1,
+        },
+      },
     ]);
     return result;
   }
@@ -153,24 +165,27 @@ const retrieveAllordersOfUser = async (userId: number) => {
 const calculateTotalOrdersOfUser = async (userId: number) => {
   if (await UserModel.isUserExists(userId)) {
     const result = await UserModel.aggregate([
-      // stage 1
+      // stage 1: finding user by userId
       { $match: { userId: userId } },
-      // stage 2
+      // stage 2: deconstructing orders
       {
         $unwind: "$orders",
       },
+      // stage 3: calculating total order cost using multiply expression
       {
         $project: {
           orders: 1,
           total: { $multiply: ["$orders.price", "$orders.quantity"] },
         },
       },
+      // stage 4: grouping to calculate the overall total price.
       {
         $group: {
           _id: null,
           totalPrice: { $sum: "$total" },
         },
       },
+      // stage 5: projecting totalPrice as per required
       {
         $project: { _id: 0, totalPrice: 1 },
       },
