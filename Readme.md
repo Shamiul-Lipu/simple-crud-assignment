@@ -13,10 +13,18 @@ Before running the application, ensure you have the following installed in your 
 ### Installation
 
 1. Clone or download the repository from [https://github.com/Shamiul-Lipu/simple-crud-assignment.git].
+
 2. Navigate to the project directory in your terminal.
 
 ```bash
    cd simple-crud-assignment
+```
+
+`Clone a Repository:`
+This command clones a repository from GitHub to your local machine.
+
+```bash
+   gh repo clone Shamiul-Lipu/simple-crud-assignment
 ```
 
 Install dependencies using npm (Node Package Manager).
@@ -43,18 +51,30 @@ MONGODB_URI=mongodb://localhost:27017/your_database_name
 
 #### Development Mode
 
+Start Development Server:
+To run the application in development mode (with live reload):
+
 ```bash
    npm run start:dev
 ```
 
-> The development server will start at http://localhost:3000 or the server port you assignted
+> The development server will start at http://localhost:3000 or the server port your local machine.
 
 #### Production Mode
+
+`Build for Production:`
+
+To build the application for production:
+
+```bash
+    npm run build
+```
+
+`Start Production Server:`
 
 To run the application in production mode:
 
 ```bash
-    npm run build
     npm start:prod
 ```
 
@@ -65,3 +85,47 @@ To run the application in production mode:
 ```bash
     npm run lint
 ```
+
+#### Troubleshooting and FAQs
+
+##### Troubleshooting
+
+If you encounter any issues while running the application, try the following steps:
+
+1. Make sure `MongoDB is running`.
+2. Check if all dependencies are installed by running `npm install`.
+
+#### My Server is Hosted on Vercel
+
+You can also access the API from the following link:
+[https://simple-crud-assignment.vercel.app]
+
+##### API Documentation
+
+The API endpoints and their usages are documented below:
+
+`User Management:`
+`Create a new user`
+Endpoint: POST /api/users`
+
+`Retrieve a list of all users`
+Endpoint: GET /api/users
+
+`Retrieve a specific user by ID`
+Endpoint: GET /api/users/:userId
+
+`Update user information`
+Endpoint: PUT /api/users/:userId
+
+`Delete a user`
+Endpoint: DELETE /api/users/:userId
+
+`Order Management:`
+`Add New Product in Order`
+Endpoint: PUT /api/users/:userId/orders
+
+`Retrieve all orders for a specific user`
+Endpoint: GET /api/users/:userId/orders
+
+`Calculate Total Price of Orders for a Specific User`
+Endpoint: GET /api/users/:userId/orders/total-price
