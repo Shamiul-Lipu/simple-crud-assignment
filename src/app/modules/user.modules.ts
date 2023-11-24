@@ -15,18 +15,69 @@ const userSchema = new Schema<User, usersMethodsModel>({
     required: [true, "User ID is required"],
     unique: true,
   },
-  username: { type: String, required: [true, "Username is required"] },
+  username: {
+    type: String,
+    required: [true, "Username is required"],
+    trim: true,
+    validate: {
+      validator: function (value: string) {
+        // Validate only letters and spaces
+        return /^[a-zA-Z\s]*$/.test(value);
+      },
+      message: "Username must contain only letters and spaces",
+    },
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
   },
   fullName: {
-    firstName: { type: String, required: [true, "First Name is required"] },
-    lastName: { type: String, required: [true, "Last Name is required"] },
+    firstName: {
+      type: String,
+      required: [true, "First Name is required"],
+      trim: true,
+      validate: {
+        validator: function (value: string) {
+          return /^[a-zA-Z\s]*$/.test(value);
+        },
+        message: "firstName must contain only letters and spaces",
+      },
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last Name is required"],
+      trim: true,
+      validate: {
+        validator: function (value: string) {
+          return /^[a-zA-Z\s]*$/.test(value);
+        },
+        message: "lastName must contain only letters and spaces",
+      },
+    },
   },
-  age: { type: Number, required: [true, "Age is required"] },
-  email: { type: String, required: [true, "Email is required"] },
-  isActive: { type: Boolean },
+  age: {
+    type: Number,
+    required: [true, "Age is required"],
+    validate: {
+      validator: Number.isInteger,
+      message: "Age must be an integer",
+    },
+  },
+  email: {
+    type: String,
+    required: [true, "Email is required"],
+    validate: {
+      validator: function (value: string) {
+        // Simple email validation using regex (modify as needed)
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      },
+      message: "Email must be a valid format",
+    },
+  },
+  isActive: {
+    type: Boolean,
+    required: true,
+  },
   hobbies: [{ type: String, required: true }],
   address: {
     street: { type: String, required: [true, "Street is required"] },

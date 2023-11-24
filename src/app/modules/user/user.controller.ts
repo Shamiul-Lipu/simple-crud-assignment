@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
 import { userService } from "./user.service";
 import { OrdersValidatorSchema, userValidatorSchema } from "./user.validation";
@@ -91,14 +92,14 @@ const retrieveUserByID = async (req: Request, res: Response) => {
       message: "User fetched successfully!",
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     // console.log(error);
     return res.json({
       success: false,
       message: "Somthing went wrong",
       error: {
         code: 404,
-        description: "Somthing went wrong!",
+        description: `${error.message}`,
       },
     });
   }
@@ -132,7 +133,7 @@ const updateUser = async (req: Request, res: Response) => {
     // console.log(error);
     res.status(404).json({
       success: false,
-      message: "User not found",
+      message: "Somthing went wrong",
       error: {
         code: 404,
         description: `${error.message}`,
@@ -168,7 +169,7 @@ const deleteUser = async (req: Request, res: Response) => {
     // console.log(error);
     res.json({
       success: false,
-      message: "User not found",
+      message: "Somthing went wrong",
       error: {
         code: 404,
         description: `${error.message}`,
@@ -292,8 +293,16 @@ const calculateTotalOrdersOfUser = async (req: Request, res: Response) => {
         },
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     // console.log(error);
+    res.json({
+      success: false,
+      message: "Somthing went wrong",
+      error: {
+        code: 404,
+        description: `${error.message}`,
+      },
+    });
   }
 };
 

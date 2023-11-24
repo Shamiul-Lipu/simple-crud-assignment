@@ -11,7 +11,7 @@ app.use(cors());
 app.use("/api/users", usersRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+  res.send("SIMPLE CRUD ASSIGNMENT");
 });
 
 export default app;

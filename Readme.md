@@ -12,7 +12,8 @@ Before running the application, ensure you have the following installed in your 
 
 ### Installation
 
-Clone or download the repository from [https://github.com/Shamiul-Lipu/simple-crud-assignment.git]. 2. Navigate to the project directory in your terminal.
+1. Clone or download the repository from [https://github.com/Shamiul-Lipu/simple-crud-assignment.git].
+2. Navigate to the project directory in your terminal.
 
 ```bash
    cd simple-crud-assignment

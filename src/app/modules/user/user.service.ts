@@ -73,6 +73,7 @@ const retrieveUserByID = async (userId: number) => {
 //  Update user information
 const updateUser = async (userId: number, user: User) => {
   if (await UserModel.isUserExists(userId)) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const result = await UserModel.findOneAndUpdate(
       { userId: userId },
       { $set: { ...user } },

@@ -22,25 +22,42 @@ const userValidatorSchema = Joi.object({
     "number.min": "User ID must be at least 1",
     "any.required": "User ID is required",
   }),
-  username: Joi.string().trim().min(3).max(30).required().messages({
-    "string.empty": "Username cannot be empty",
-    "string.min": "Username must have at least 3 characters",
-    "string.max": "Username cannot exceed 30 characters",
-    "any.required": "Username is required",
-  }),
+  username: Joi.string()
+    .trim()
+    .max(30)
+    .regex(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/)
+    .required()
+    .messages({
+      "string.empty": "Username cannot be empty",
+      "string.max": "Username cannot exceed 30 characters",
+      "any.required": "Username is required",
+      "string.pattern.base": "Username must contain only letters",
+    }),
   password: Joi.string().required().messages({
     "any.required": "Password is required",
     "string.empty": "Password cannot be empty",
   }),
   fullName: Joi.object({
-    firstName: Joi.string().trim().required().messages({
-      "any.required": "First Name is required",
-      "string.empty": "First Name cannot be empty",
-    }),
-    lastName: Joi.string().trim().required().messages({
-      "any.required": "Last Name is required",
-      "string.empty": "Last Name cannot be empty",
-    }),
+    firstName: Joi.string()
+      .trim()
+      .regex(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/)
+      .required()
+      .messages({
+        "any.required": "First Name is required",
+        "string.empty": "First Name cannot be empty",
+        "string.pattern.base":
+          "First Name must contain only alphabetic characters",
+      }),
+    lastName: Joi.string()
+      .trim()
+      .regex(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/)
+      .required()
+      .messages({
+        "any.required": "Last Name is required",
+        "string.empty": "Last Name cannot be empty",
+        "string.pattern.base":
+          "Last Name must contain only alphabetic characters",
+      }),
   }),
   age: Joi.number().integer().max(120).required().messages({
     "number.integer": "Age must be an integer",
