@@ -14,12 +14,6 @@ Before running the application, ensure you have the following installed in your 
 
 1. Clone or download the repository from [https://github.com/Shamiul-Lipu/simple-crud-assignment.git].
 
-2. Navigate to the project directory in your terminal.
-
-```bash
-   cd simple-crud-assignment
-```
-
 `Clone a Repository:`
 This command clones a repository from GitHub to your local machine.
 
@@ -27,7 +21,13 @@ This command clones a repository from GitHub to your local machine.
    gh repo clone Shamiul-Lipu/simple-crud-assignment
 ```
 
-Install dependencies using npm (Node Package Manager).
+2. Navigate to the project directory in your terminal.
+
+```bash
+   cd simple-crud-assignment
+```
+
+3. Install dependencies using npm (Node Package Manager).
 
 ```bash
    npm install
