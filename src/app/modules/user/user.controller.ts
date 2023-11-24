@@ -9,7 +9,7 @@ const createNewUser = async (req: Request, res: Response) => {
 
     const { error, value } = userValidatorSchema.validate(user);
     // console.log(error, value);
-
+    // error response based on joi validation
     if (error) {
       return res.status(400).json({
         success: false,
@@ -36,7 +36,7 @@ const createNewUser = async (req: Request, res: Response) => {
       message: "Something went wrong",
       error: {
         code: 500,
-        description: "Internal Server Error",
+        description: "The user ID you entered might be exists already!",
       },
     });
   }
@@ -184,7 +184,7 @@ const addNewProductsInOrder = async (req: Request, res: Response) => {
     const orders = req.body;
 
     const { error, value } = OrdersValidatorSchema.validate(orders);
-
+    // error response based on joi validation
     if (error) {
       return res.status(400).json({
         success: false,
@@ -201,7 +201,7 @@ const addNewProductsInOrder = async (req: Request, res: Response) => {
       value
     );
 
-    console.log({ result: result }, userId);
+    // console.log({ result: result }, userId);
 
     if (!result) {
       return res.json({
